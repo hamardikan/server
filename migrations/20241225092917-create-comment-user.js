@@ -2,26 +2,26 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('PostTags', {
+    await queryInterface.createTable('CommentUsers', {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4
       },
-      postId: {
+      commentId: {
         type: Sequelize.UUID,
         references: {
-          model: 'Posts',
+          model: 'Comments',
           key: 'id'
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
-      tagId: {
+      userId: {
         type: Sequelize.UUID,
         references: {
-          model: 'Tags',
+          model: 'Users',
           key: 'id'
         },
         onUpdate: 'CASCADE',
@@ -37,14 +37,14 @@ module.exports = {
       }
     });
 
-    // Add composite unique constraint
-    await queryInterface.addConstraint('PostTags', {
-      fields: ['postId', 'tagId'],
+    // Add composite unique constraint to prevent duplicate likes
+    await queryInterface.addConstraint('CommentUsers', {
+      fields: ['commentId', 'userId'],
       type: 'unique',
-      name: 'unique_post_tag'
+      name: 'unique_comment_user_like'
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('PostTags');
+    await queryInterface.dropTable('CommentUsers');
   }
 };

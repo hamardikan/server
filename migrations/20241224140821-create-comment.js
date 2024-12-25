@@ -2,15 +2,30 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('PostTags', {
+    await queryInterface.createTable('Comments', {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4
       },
+      content: {
+        type: Sequelize.TEXT,
+        allowNull: false
+      },
+      parentId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: {
+          model: 'Comments',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
       postId: {
         type: Sequelize.UUID,
+        allowNull: false,
         references: {
           model: 'Posts',
           key: 'id'
@@ -18,14 +33,23 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
-      tagId: {
+      userId: {
         type: Sequelize.UUID,
+        allowNull: false,
         references: {
-          model: 'Tags',
+          model: 'Users',
           key: 'id'
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
+      },
+      likes: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
+      isEdited: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
       createdAt: {
         allowNull: false,
@@ -36,15 +60,8 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
-
-    // Add composite unique constraint
-    await queryInterface.addConstraint('PostTags', {
-      fields: ['postId', 'tagId'],
-      type: 'unique',
-      name: 'unique_post_tag'
-    });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('PostTags');
+    await queryInterface.dropTable('Comments');
   }
 };
