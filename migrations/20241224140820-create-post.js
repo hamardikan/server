@@ -13,9 +13,20 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      slug: {
+        type: Sequelize.STRING,
+        unique: true
+      },
+      description: {
+        type: Sequelize.TEXT
+      },
       content: {
         type: Sequelize.TEXT,
         allowNull: false
+      },
+      images: {
+        type: Sequelize.JSONB,
+        defaultValue: []
       },
       published: {
         type: Sequelize.BOOLEAN,
@@ -23,12 +34,13 @@ module.exports = {
       },
       authorId: {
         type: Sequelize.UUID,
+        allowNull: false,
         references: {
           model: 'Users',
           key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,
@@ -39,7 +51,12 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+
+    await queryInterface.addIndex('Posts', ['authorId']);
+    await queryInterface.addIndex('Posts', ['slug'], { unique: true });
+    await queryInterface.addIndex('Posts', ['published']);
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Posts');
   }

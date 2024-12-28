@@ -1,24 +1,43 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class PostTag extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      // No need to define associations here since they're defined in Post and Tag models
     }
   }
+  
   PostTag.init({
-    postId: DataTypes.UUID,
-    tagId: DataTypes.UUID
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
+    postId: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'Posts',
+        key: 'id'
+      }
+    },
+    tagId: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'Tags',
+        key: 'id'
+      }
+    }
   }, {
     sequelize,
     modelName: 'PostTag',
+    // Adding indexes for better query performance
+    indexes: [
+      {
+        unique: true,
+        fields: ['postId', 'tagId']
+      }
+    ]
   });
   return PostTag;
 };

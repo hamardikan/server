@@ -60,7 +60,12 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+
+    await queryInterface.addIndex('Comments', ['postId']);
+    await queryInterface.addIndex('Comments', ['userId']);
+    await queryInterface.addIndex('Comments', ['parentId']);
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Comments');
   }

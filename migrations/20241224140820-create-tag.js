@@ -35,7 +35,11 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+
+    await queryInterface.addIndex('Tags', ['slug']);
+    await queryInterface.addIndex('Tags', ['postCount']);
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Tags');
   }

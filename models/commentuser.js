@@ -1,24 +1,43 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class CommentUser extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      // No need to define associations here since they're defined in Comment and User models
     }
   }
+  
   CommentUser.init({
-    userId: DataTypes.UUID,
-    commentId: DataTypes.UUID
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
+    commentId: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'Comments',
+        key: 'id'
+      }
+    },
+    userId: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'Users',
+        key: 'id'
+      }
+    }
   }, {
     sequelize,
     modelName: 'CommentUser',
+    // Adding indexes for better query performance
+    indexes: [
+      {
+        unique: true,
+        fields: ['commentId', 'userId']
+      }
+    ]
   });
   return CommentUser;
 };

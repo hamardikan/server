@@ -11,6 +11,7 @@ module.exports = {
       },
       commentId: {
         type: Sequelize.UUID,
+        allowNull: false,
         references: {
           model: 'Comments',
           key: 'id'
@@ -20,6 +21,7 @@ module.exports = {
       },
       userId: {
         type: Sequelize.UUID,
+        allowNull: false,
         references: {
           model: 'Users',
           key: 'id'
@@ -37,13 +39,9 @@ module.exports = {
       }
     });
 
-    // Add composite unique constraint to prevent duplicate likes
-    await queryInterface.addConstraint('CommentUsers', {
-      fields: ['commentId', 'userId'],
-      type: 'unique',
-      name: 'unique_comment_user_like'
-    });
+    await queryInterface.addIndex('CommentUsers', ['commentId', 'userId'], { unique: true });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('CommentUsers');
   }

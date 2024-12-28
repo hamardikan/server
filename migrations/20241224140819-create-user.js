@@ -14,6 +14,10 @@ module.exports = {
         allowNull: false,
         unique: true
       },
+      password: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       name: {
         type: Sequelize.STRING,
         allowNull: false
@@ -25,6 +29,11 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true
       },
+      role: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 'user'
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -34,7 +43,11 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+
+    await queryInterface.addIndex('Users', ['email']);
+    await queryInterface.addIndex('Users', ['googleId']);
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Users');
   }

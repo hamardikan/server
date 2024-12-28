@@ -11,6 +11,7 @@ module.exports = {
       },
       postId: {
         type: Sequelize.UUID,
+        allowNull: false,
         references: {
           model: 'Posts',
           key: 'id'
@@ -20,6 +21,7 @@ module.exports = {
       },
       tagId: {
         type: Sequelize.UUID,
+        allowNull: false,
         references: {
           model: 'Tags',
           key: 'id'
@@ -37,13 +39,9 @@ module.exports = {
       }
     });
 
-    // Add composite unique constraint
-    await queryInterface.addConstraint('PostTags', {
-      fields: ['postId', 'tagId'],
-      type: 'unique',
-      name: 'unique_post_tag'
-    });
+    await queryInterface.addIndex('PostTags', ['postId', 'tagId'], { unique: true });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('PostTags');
   }
